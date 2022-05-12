@@ -9,19 +9,26 @@ typedef struct Nodo {
     struct Nodo *proximo;
 } Produto;
 
-void inclusao(Produto **, Produto **);
-void destroilista(Produto **, Produto**);
+void inclusao(Produto **);
+void destroilista(Produto **);
 
 int main() {
-    Produto *p_aux, *info = NULL;
+    Produto *lista = NULL;
     int opcao;
 
-    cout << "Digite a opcao desejada: ";
+    cout << "Digite a opcao desejada: " << endl;
+    cout << "1 - Incluir um produto na lista" << endl;
+    cout << "2 - Consultar um produto" << endl;
+    cout << "3 - Excluir um produto" << endl;
+    cout << "4 - Vender um produto" << endl;
+    cout << "5 - Relatorio de estoque" << endl;
+    cout << "6 - Relatorio de vendas" << endl;
+    cout << "7 - Sair" << endl;
     cin >> opcao;
 
     switch (opcao) {
     case 1:
-        inclusao(&info, &p_aux);
+        inclusao(&lista);
         break;
 
         /*     case 2:
@@ -46,11 +53,13 @@ int main() {
 
         return 0;
     }
+
+    destroilista(&lista);
 }
 
-void inclusao(Produto **info, Produto **p_aux) {
-    Produto *p;
-    p = new Produto; // aloca memoria p/ novo nodo
+void inclusao(Produto **lista) {
+    Produto *p, *p_aux;
+    p = new Produto; // Aloca memoria para novo nodo
     string addProduto;
 
     if (p == NULL) {
@@ -59,46 +68,45 @@ void inclusao(Produto **info, Produto **p_aux) {
         exit(1);
     }
 
-    else {
-        cout << "Insira o nome do produto: ";
-        cin.ignore(); //! cin.ignore aqui!
-        getline(cin, addProduto);
+    cin.ignore(); //! cin.ignore aqui!
+    cout << "Insira o nome do produto: ";
+    getline(cin, addProduto);
 
-        while (p != NULL and p->nome != addProduto) {
-            if (addProduto == p->nome) {
-                cout << "Produto ja existente! ";
-                return; //! TALVEZ NÃO FUNCIONE!
-            } else
-                p = p->proximo;
+  /*   while (p != NULL and p->nome != addProduto) { //! Arrumar
+        p = p->proximo;
+        if (p->nome == addProduto) {
+            cout << "Produto ja existente! ";
+            return; //! TALVEZ NÃO FUNCIONE!
         }
+    } */
 
-        p->nome = addProduto;
+    
 
-        srand(time(NULL));
-        p->codigo = rand() % 100 + 1;
+    p->nome = addProduto;
 
-        cout << "Quantidade de unidades no estoque: ";
-        cin >> p->q_estoque;
+    srand(time(NULL));
+    p->codigo = rand() % 100 + 1;
 
-        cout << "Preco de venda: ";
-        cin >> p->preco;
+    cout << "Quantidade de unidades no estoque: ";
+    cin >> p->q_estoque;
 
-        p->proximo = *info;
+    cout << "Preco de venda: ";
+    cin >> p->preco;
 
-        if (info == NULL)
-            *info = p; // conecta o novo nodo ao inicio da lista
-        else
-            *p_aux = p;
+    if (lista == NULL)
+        *lista = p; // conecta o novo nodo ao inicio da lista
+    else
+        p_aux->proximo = p;
+    p_aux = p;
 
-        cout << "Inclusao confirmada!";
-    }
+    cout << "Inclusao confirmada!";
 }
 
-void destroilista(Produto **info) { // ponteiro de ponteiro
+void destroilista(Produto **lista) { // ponteiro de ponteiro
     Produto *p;
-    while (*info != NULL) {
-        p = *info;
-        *info = (*info)->proximo;
+    while (*lista != NULL) {
+        p = *lista;
+        *lista = (*lista)->proximo;
         delete p;
     }
 }
