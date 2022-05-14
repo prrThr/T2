@@ -22,12 +22,12 @@ void exclusao_nome(Produto *, string, Produto **); // nao esta funcionando
 void exclusao_codigo(Produto *, int, Produto **);  // nao esta funcionando
 
 int main() {
-    Produto *lista = NULL;
+    Produto *lista = NULL, p_aux;
     int opcao;
     do {
 
         opcao = funcao_opcao();
-        system("cls");
+        // system("cls");
 
         switch (opcao) {
         case 1:
@@ -66,6 +66,7 @@ int main() {
 int funcao_opcao() {
     int escolha;
     do {
+        // system("cls");
         cout << "Digite a opcao desejada: " << endl;
         cout << "1 - Incluir um produto na lista" << endl;
         cout << "2 - Consultar um produto" << endl;
@@ -80,50 +81,49 @@ int funcao_opcao() {
 }
 
 // ---------- Incluir ---------- //
-void inclusao(Produto **lista) // dando erro na hora de incluir mais de um produto
-{
-    Produto *p, *p_aux;
+void inclusao(Produto **lista) {
+    Produto *p, *p_aux, *procurar;
     p = new Produto; // Aloca memoria para novo nodo
     string addProduto;
-
     if (p == NULL) {
         cout << "Sem memoria";
         cin.get();
         exit(1);
     }
-
     cin.ignore(); //! cin.ignore aqui!
     cout << "Insira o nome do produto: ";
     getline(cin, addProduto);
 
-    /*   while (p != NULL and p->nome != addProduto) { //! Arrumar
-          p = p->proximo;
-          if (p->nome == addProduto) {
-              cout << "Produto ja existente! ";
-              return; //! TALVEZ NÃO FUNCIONE!
-          }
-      } */
+    procurar = *lista;
+    while (procurar != NULL) {
+        if (procurar->nome == addProduto) {
+            cout << "Produto ja existente! ";
+            return;
+        }
+        procurar = procurar->proximo;
+    }
 
     p->nome = addProduto;
-
     srand(time(NULL));
     p->codigo = rand() % 100 + 1;
     cout << "Codigo do produto: " << p->codigo << endl;
-
     cout << "Quantidade de unidades no estoque: ";
     cin >> p->q_estoque;
-
     cout << "Preco de venda: ";
     cin >> p->preco;
 
-    if (*lista == NULL)
+    p->proximo = NULL;
+    if (*lista == NULL) {
         *lista = p; // Conecta o novo nodo ao inicio da lista
-    else {
-        cout << "chegou aqui" << endl;
-        p_aux->proximo = p;
+        cout << "Inclusao confirmada!" << endl;
+        return;
     }
-    p_aux = p;
-    cout << "Inclusao confirmada!" << endl; // fazer aquilo de apertar enter para continuar, para a mensagem aparecer na tela
+    p_aux = *lista;
+    while (p_aux->proximo != NULL) {
+        p_aux = p_aux->proximo;
+    }
+    p_aux->proximo = p; // inclui novo nodo, sem necessidade alterar ptr_lista
+    cout << "Inclusao confirmada!" << endl;
 }
 
 // ---------- Consulta ---------- //
@@ -187,12 +187,12 @@ void exclusao(Produto **lista) {
             cout << "informe o codigo do produto que deseja excluir: ";
             // verificar se o produto existe
             cin >> codigo;
-            // exclusao_codigo(p, codigo, &lista);
+            exclusao_codigo(p, codigo, lista);
         } else {
             cout << "informe o nome do produto que deseja excluir: ";
             // verificar se o produto existe
             getline(cin, produto);
-            // exclusao_nome(p, produto, &lista);
+            exclusao_nome(p, produto, lista);
         }
     }
 }
