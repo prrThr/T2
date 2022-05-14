@@ -17,9 +17,9 @@ int funcao_opcao();
 void inclusao(Produto **);
 void consulta(Produto *);
 void destroilista(Produto **);
-/* void exclusao(Produto **);                         // nao esta funcionando
+void exclusao(Produto **);                         // nao esta funcionando
 void exclusao_nome(Produto *, string, Produto **); // nao esta funcionando
-void exclusao_codigo(Produto *, int, Produto **);  // nao esta funcionando */
+void exclusao_codigo(Produto *, int, Produto **);  // nao esta funcionando
 
 int main() {
     Produto *lista = NULL, p_aux;
@@ -36,20 +36,20 @@ int main() {
         case 2:
             consulta(lista);
             break;
-            /*case 3:
-                exclusao(&lista);
+        case 3:
+            exclusao(&lista);
+            break;
+            /*
+            case 4:
+                venda();
                 break;
-
-                case 4:
-                    venda();
-                    break;
-                case 5:
-                    relatorio_estoque();
-                    break;
-                case 6:
-                    relatorio_vendas();
-                    break;
-                */
+            case 5:
+                relatorio_estoque();
+                break;
+            case 6:
+                relatorio_vendas();
+                break;
+            */
 
         case 7:
             cout << "Saindo..." << endl;
@@ -93,16 +93,14 @@ void inclusao(Produto **lista) {
     cin.ignore(); //! cin.ignore aqui!
     cout << "Insira o nome do produto: ";
     getline(cin, addProduto);
-
     procurar = *lista;
     while (procurar != NULL) {
         if (procurar->nome == addProduto) {
-            cout << "Produto ja existente! ";
+            cout << "Produto ja existente! " << endl;
             return;
         }
         procurar = procurar->proximo;
     }
-
     p->nome = addProduto;
     srand(time(NULL));
     p->codigo = rand() % 100 + 1;
@@ -125,7 +123,7 @@ void inclusao(Produto **lista) {
     p_aux->proximo = p; // inclui novo nodo, sem necessidade alterar ptr_lista
     cout << "Inclusao confirmada!" << endl;
 }
-
+// ----------
 // ---------- Consulta ---------- //
 void consulta(Produto *lista) {
     int codigo;
@@ -163,12 +161,11 @@ void destroilista(Produto **lista) // ponteiro de ponteiro
 }
 
 //---------- Excluir ---------- //
-/* void exclusao(Produto **lista) {
+void exclusao(Produto **lista) {
     Produto *p;
     p = *lista;
     string produto;
     int codigo, opcao;
-
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
     else // se a lista não esta vazia
@@ -181,11 +178,13 @@ void destroilista(Produto **lista) // ponteiro de ponteiro
         } while (opcao < 1 or opcao > 2);
         if (opcao == 1) {
             cout << "informe o codigo do produto que deseja excluir: ";
+            cin.ignore();
             // verificar se o produto existe
             cin >> codigo;
             exclusao_codigo(p, codigo, lista);
         } else {
             cout << "informe o nome do produto que deseja excluir: ";
+            cin.ignore();
             // verificar se o produto existe
             getline(cin, produto);
             exclusao_nome(p, produto, lista);
@@ -205,9 +204,12 @@ void exclusao_nome(Produto *p, string produto, Produto **lista) {
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl;
-            opcao2 = toupper(cin.get());
-        } while (opcao2 != 'S' or opcao2 != 'N');
-        if (opcao2 == 'S') {
+            cin.ignore();
+            cin >> opcao2;
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
             *lista = p->proximo; // exclusao do 1o nodo
             delete p;            // libera memória do nodo excluido
             cout << "exclusao confirmada!" << endl;
@@ -232,15 +234,21 @@ void exclusao_nome(Produto *p, string produto, Produto **lista) {
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl;
-            opcao2 = toupper(cin.get());
-        } while (opcao2 != 'S' or opcao2 != 'N');
-        if (opcao2 == 'S') {
+            cin.ignore();
+            cin >> opcao2;
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
             pant->proximo = p->proximo; // conecta nodos ant e post
             delete p;                   // libera memória do nodo excluido
             cout << "exclusao confirmada!" << endl;
-        } else
+        } else {
             cout << "Exclusao nao realizada" << endl;
+            return;
+        }
     }
+    cout << "produto nao encontrado" << endl;
 }
 
 void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
@@ -256,9 +264,12 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl;
-            opcao2 = toupper(cin.get());
-        } while (opcao2 != 'S' or opcao2 != 'N');
-        if (opcao2 == 'S') {
+            cin.ignore();
+            cin >> opcao2;
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
             *lista = p->proximo; // exclusao do 1o nodo
             delete p;            // libera memória do nodo excluido
             cout << "exclusao confirmada!" << endl;
@@ -283,13 +294,19 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl;
-            opcao2 = toupper(cin.get());
-        } while (opcao2 != 'S' or opcao2 != 'N');
-        if (opcao2 == 'S') {
+            cin.ignore();
+            cin >> opcao2;
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
             pant->proximo = p->proximo; // conecta nodos ant e post
             delete p;                   // libera memória do nodo excluido
             cout << "exclusao confirmada!" << endl;
-        } else
+        } else {
             cout << "Exclusao nao realizada" << endl;
+            return;
+        }
     }
-} */
+    cout << "produto nao encontrado" << endl;
+}
