@@ -17,9 +17,9 @@ int funcao_opcao();
 void inclusao(Produto **);
 void consulta(Produto *);
 void destroilista(Produto **);
-void exclusao(Produto **);                         // nao esta funcionando
+/* void exclusao(Produto **);                         // nao esta funcionando
 void exclusao_nome(Produto *, string, Produto **); // nao esta funcionando
-void exclusao_codigo(Produto *, int, Produto **);  // nao esta funcionando
+void exclusao_codigo(Produto *, int, Produto **);  // nao esta funcionando */
 
 int main() {
     Produto *lista = NULL, p_aux;
@@ -36,20 +36,20 @@ int main() {
         case 2:
             consulta(lista);
             break;
-        case 3:
-            exclusao(&lista);
-            break;
-            /*
-            case 4:
-                venda();
+            /*case 3:
+                exclusao(&lista);
                 break;
-            case 5:
-                relatorio_estoque();
-                break;
-            case 6:
-                relatorio_vendas();
-                break;
-            */
+
+                case 4:
+                    venda();
+                    break;
+                case 5:
+                    relatorio_estoque();
+                    break;
+                case 6:
+                    relatorio_vendas();
+                    break;
+                */
 
         case 7:
             cout << "Saindo..." << endl;
@@ -129,15 +129,14 @@ void inclusao(Produto **lista) {
 // ---------- Consulta ---------- //
 void consulta(Produto *lista) {
     int codigo;
-    char continuar;
     Produto *p = lista;
     if (lista == NULL) {
-        cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl; // fazer aquilo de apertar enter para continuar, para a mensagem aparecer na tela
+        cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
         return;
     }
     cout << "Informe o codigo do produto que deseja consultar: ";
     cin >> codigo;
-    while (lista != NULL and p->codigo != codigo) {
+    while (p != NULL and p->codigo != codigo) {
         p = p->proximo;
     }
     if (p != NULL) // encontrou elemento
@@ -147,12 +146,9 @@ void consulta(Produto *lista) {
         cout << "Preco: " << p->preco << endl;
         cout << "Quantidade no estoque: " << p->q_estoque << endl;
         cout << "Quantidade vendida:" << p->q_vendida << endl;
-    } else
-        cout << "Produto inexistente" << endl;
-    do {
-        cout << "Pressione ENTER para continuar: " << endl;
-        continuar = cin.get();
-    } while (continuar != '\n');
+        return;
+    }
+    cout << "Produto inexistente" << endl;
 }
 
 //---------- Liberar memória ---------- //
@@ -167,7 +163,7 @@ void destroilista(Produto **lista) // ponteiro de ponteiro
 }
 
 //---------- Excluir ---------- //
-void exclusao(Produto **lista) {
+/* void exclusao(Produto **lista) {
     Produto *p;
     p = *lista;
     string produto;
@@ -296,4 +292,4 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
         } else
             cout << "Exclusao nao realizada" << endl;
     }
-}
+} */
