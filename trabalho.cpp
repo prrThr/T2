@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-// adicionar os system("cls"), cin.ignore() e os "enters"
-// fazer a opcao 4 e 6
-// fazer a subrotina de ordenação
+// Adicionar os system("cls"), cin.ignore() e os "enters"
+// Fazer os teste dos while's
+// Tazer a subrotina de ordenação
 using namespace std;
 
 typedef struct Nodo {
@@ -14,8 +14,9 @@ typedef struct Nodo {
 } Produto;
 
 int funcao_opcao();
+void continuar();
 void inclusao(Produto **);
-// void ordenar(Produto **); //! ARRUMAR
+// void ordenar(string, Produto **); //! ARRUMAR
 void consulta(Produto *);
 void destroilista(Produto **);
 void exclusao(Produto **);
@@ -28,15 +29,16 @@ void relatorio_vendas(Produto *);
 int main() {
     Produto *lista = NULL, p_aux;
     int opcao;
+    char continuar;
 
     do {
+        system("cls");
         opcao = funcao_opcao();
         system("cls");
 
         switch (opcao) {
         case 1:
             inclusao(&lista);
-            // ordenar(&lista); //! ARRUMAR
             break;
 
         case 2:
@@ -63,11 +65,19 @@ int main() {
             cout << "Saindo..." << endl;
             break;
         }
+
     } while (opcao != 7);
     destroilista(&lista);
     return 0;
 }
-
+// ---------- Continuar ----- //
+void continuar() {
+    char continuar;
+    do {
+        cout << "Pressione ENTER para continuar: ";
+        continuar = cin.get();
+    } while (continuar != '\n');
+}
 // ---------- Menu ---------- //
 int funcao_opcao() {
     int escolha;
@@ -111,15 +121,17 @@ void inclusao(Produto **lista) {
     }
     p->nome = addProduto;
 
+    // ordenar(addProduto, lista);
+
     srand(time(NULL));
     p->codigo = rand() % 100 + 1;
     cout << "Codigo do produto: " << p->codigo << endl;
 
     cout << "Quantidade de unidades no estoque: ";
     cin >> p->q_estoque;
+    cin >> p->preco;
 
     cout << "Preco de venda: ";
-    cin >> p->preco;
 
     p->proximo = NULL;
     if (*lista == NULL) // incluir o primeiro
@@ -134,32 +146,42 @@ void inclusao(Produto **lista) {
     }
     p_aux->proximo = p; // inclui novo nodo, sem necessidade alterar a lista
     cout << "Inclusao confirmada!" << endl;
+
+    continuar();
 }
 
 // ---------- Ordenar  ---------- //
-/* void ordenar(Produto **lista) { //! ARRUMAR
-    Produto *p, *paux;
-    string aux;
-    p = new Produto;
-    paux = *lista;
+/* void ordenar(string nome, Produto **lista) { //! ARRUMAR
+    Produto *p, *paux, *aux;
 
     if (lista == NULL)
         return;
 
-    for (paux; paux->proximo != NULL; paux = paux->proximo) {
-        for (p = paux->proximo; p->proximo != NULL; p = p->proximo) {
-            if (p->nome[0] < paux->nome[0]) {
-                aux = p->nome;
-                paux->nome = p->nome;
-                p->nome = paux->nome;
-            }
-        }
-        paux->proximo = p;
-        *lista = paux;
-        paux = p;
+    while (p != NULL and nome[0] < p->nome[0]) {
+        p = p->proximo;
     }
-} */
-
+    if (p != NULL) // encontrou elemento
+    {
+        if (p->nome[0] == nome[0]) {
+            for (int i = 1; i < nome.size(); i++)
+                if (nome[i] > p->nome[i]) {
+                    //*faz a alteração
+                    paux->nome = nome;
+                    aux = p;
+                    p = paux;
+                    paux = aux;
+                    break;
+                }
+        }
+        //*faz a alteração
+        paux->nome = nome;
+        aux = p;
+        p = paux;
+        paux = aux;
+    }
+    return;
+}
+ */
 // ---------- Consulta ---------- //
 void consulta(Produto *lista) {
     int codigo;
@@ -393,7 +415,6 @@ void relatorio_vendas(Produto *lista) {
     }
 }
 
-// ---------- Vendas ---------- //
 // ---------- Vendas ---------- //
 void vendas(Produto *lista) {
     int qtde, qtde_venda = 0, codigo;
