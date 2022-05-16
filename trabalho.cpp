@@ -21,9 +21,11 @@ void inclusao(Produto **);
 void consulta(Produto *);
 void destroilista(Produto **);
 void exclusao(Produto **);
-void vendas(Produto *);
+void exclusao_aux1(Produto *, Produto **, char);
+void exclusao_aux2(Produto *, Produto **, char, Produto *);
 void exclusao_nome(Produto *, string, Produto **);
 void exclusao_codigo(Produto *, int, Produto **);
+void vendas(Produto *);
 void relatorio_estoque(Produto *);
 void relatorio_vendas(Produto *);
 
@@ -283,70 +285,18 @@ void exclusao(Produto **lista) {
     }
 }
 
-void exclusao_nome(Produto *p, string produto, Produto **lista) {
-    Produto *pant = NULL;
-    char opcao2;
-
-    if (p->nome == produto) {
-        mostrarInfos(p, opcao2, lista);
-
-        if (opcao2 == 's') {
-            *lista = p->proximo; // exclusao do 1o nodo
-            delete p;            // libera memória do nodo excluido
-            cout << "exclusao confirmada!" << endl;
-            return;
-        } else
-            cout << "Exclusao nao realizada" << endl;
+void exclusao_aux1(Produto *p, Produto **lista, char opcao2) {
+    mostrarInfos(p, opcao2, lista);
+    if (opcao2 == 's') {
+        *lista = p->proximo; // exclusao do 1o nodo
+        delete p;            // libera memória do nodo excluido
+        cout << "exclusao confirmada!" << endl;
         return;
-    }
-
-    pant = *lista;
-    p = p->proximo; // tipo um i++
-    while (p != NULL and p->nome != produto) {
-        pant = p;
-        p = p->proximo;
-    }
-
-    if (p != NULL) { // achou elemento pra excluir
-        mostrarInfos(p, opcao2, lista);
-
-        if (opcao2 == 's') {
-            pant->proximo = p->proximo; // conecta nodos ant e post
-            delete p;                   // libera memória do nodo excluido
-            cout << "exclusao confirmada!" << endl;
-        } else {
-            cout << "Exclusao nao realizada" << endl;
-            return;
-        }
-    }
-    else
-        cout << "Produto nao encontrado" << endl;
+    } else
+        cout << "Exclusao nao realizada" << endl;
+    return;
 }
-
-void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
-    Produto *pant = NULL;
-    char opcao2;
-
-    if (p->codigo == codigo) {
-        mostrarInfos(p, opcao2, lista);
-
-        if (opcao2 == 's') {
-            *lista = p->proximo; // exclusao do 1o nodo
-            delete p;            // libera memória do nodo excluido
-            cout << "exclusao confirmada!" << endl;
-            return;
-        } else
-            cout << "Exclusao nao realizada" << endl;
-        return;
-    }
-
-    pant = *lista;
-    p = p->proximo; // tipo um i++
-    while (p != NULL and p->codigo != codigo) {
-        pant = p;
-        p = p->proximo;
-    }
-
+void exclusao_aux2(Produto *p, Produto **lista, char opcao2, Produto *pant) {
     if (p != NULL) { // achou elemento pra excluir
         mostrarInfos(p, opcao2, lista);
 
@@ -360,6 +310,40 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
         }
     } else
         cout << "Produto nao encontrado" << endl;
+}
+
+void exclusao_nome(Produto *p, string produto, Produto **lista) {
+    Produto *pant = NULL;
+    char opcao2;
+
+    if (p->nome == produto)
+        exclusao_aux1(p, lista, opcao2);
+
+    pant = *lista;
+    p = p->proximo; // tipo um i++
+    while (p != NULL and p->nome != produto) {
+        pant = p;
+        p = p->proximo;
+    }
+
+    exclusao_aux2(p, lista, opcao2, pant);
+}
+
+void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
+    Produto *pant = NULL;
+    char opcao2;
+
+    if (p->codigo == codigo)
+        exclusao_aux1(p, lista, opcao2);
+
+    pant = *lista;
+    p = p->proximo; // tipo um i++
+    while (p != NULL and p->codigo != codigo) {
+        pant = p;
+        p = p->proximo;
+    }
+
+    exclusao_aux2(p, lista, opcao2, pant);
 }
 
 // ---------- Relatorio Estoque ---------- //
