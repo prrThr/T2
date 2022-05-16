@@ -29,7 +29,6 @@ void relatorio_vendas(Produto *);
 int main() {
     Produto *lista = NULL, p_aux;
     int opcao;
-    char continuar;
 
     do {
         system("cls");
@@ -65,6 +64,9 @@ int main() {
             cout << "Saindo..." << endl;
             break;
         }
+
+        cin.ignore();
+        continuar();
 
     } while (opcao != 7);
     destroilista(&lista);
@@ -127,11 +129,15 @@ void inclusao(Produto **lista) {
     p->codigo = rand() % 100 + 1;
     cout << "Codigo do produto: " << p->codigo << endl;
 
-    cout << "Quantidade de unidades no estoque: ";
-    cin >> p->q_estoque;
-    cin >> p->preco;
+    do {
+        cout << "Quantidade de unidades no estoque: ";
+        cin >> p->q_estoque;
+    } while (p->q_estoque <= 0);
 
-    cout << "Preco de venda: ";
+    do {
+        cout << "Preco de venda: ";
+        cin >> p->preco;
+    } while (p->preco <= 0);
 
     p->proximo = NULL;
     if (*lista == NULL) // incluir o primeiro
@@ -146,8 +152,6 @@ void inclusao(Produto **lista) {
     }
     p_aux->proximo = p; // inclui novo nodo, sem necessidade alterar a lista
     cout << "Inclusao confirmada!" << endl;
-
-    continuar();
 }
 
 // ---------- Ordenar  ---------- //
@@ -193,7 +197,9 @@ void consulta(Produto *lista) {
     }
 
     cout << "Informe o codigo do produto que deseja consultar: ";
-    cin >> codigo;
+    do {
+        cin >> codigo;
+    } while (codigo <= 0);
     while (p != NULL and p->codigo != codigo) {
         p = p->proximo;
     }
@@ -242,8 +248,9 @@ void exclusao(Produto **lista) {
 
         if (opcao == 1) {
             cout << "informe o codigo do produto que deseja excluir: ";
-            cin.ignore();
-            cin >> codigo;
+            do {
+                cin >> codigo;
+            } while (codigo <= 0);
             exclusao_codigo(p, codigo, lista);
         }
 
@@ -269,7 +276,6 @@ void exclusao_nome(Produto *p, string produto, Produto **lista) {
 
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl; // botar pra maiusculo
-            cin.ignore();
             cin >> opcao2;
             if (opcao2 != 's' and opcao2 != 'n')
                 cout << "opcao invalida!" << endl;
@@ -316,7 +322,8 @@ void exclusao_nome(Produto *p, string produto, Produto **lista) {
             return;
         }
     }
-    cout << "produto nao encontrado" << endl;
+    cout << "Produto nao encontrado" << endl;
+    cin.ignore();
 }
 void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
     Produto *pant = NULL;
@@ -331,7 +338,6 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         do {
             cout << "Confirma exclusao: S(sim) / N(nao)?" << endl; // botar pra maiusculo
-            cin.ignore();
             cin >> opcao2;
             if (opcao2 != 's' and opcao2 != 'n')
                 cout << "opcao invalida!" << endl;
@@ -375,7 +381,7 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
             return;
         }
     }
-    cout << "produto nao encontrado" << endl;
+    cout << "Produto nao encontrado" << endl;
 }
 
 // ---------- Relatorio Estoque ---------- //
@@ -390,7 +396,7 @@ void relatorio_estoque(Produto *lista) {
             cout << "-------------------------" << endl;
             cout << "Nome: " << p->nome << endl;
             cout << "Codigo: " << p->codigo << endl;
-            cout << "Preco: " << p->preco << endl;
+            cout << "Preco: R$" << p->preco << endl;
             cout << "Quantidade no estoque: " << p->q_estoque << endl;
             p = p->proximo;
         }
@@ -409,7 +415,7 @@ void relatorio_vendas(Produto *lista) {
             cout << "-------------------------" << endl;
             cout << "Codigo: " << p->codigo << endl;
             cout << "Quantidade vendida: " << p->q_vendida << endl;
-            cout << "Total da venda: " << p->q_vendida * p->preco << endl;
+            cout << "Total da venda: R$" << p->q_vendida * p->preco << endl;
             p = p->proximo;
         }
     }
@@ -427,14 +433,16 @@ void vendas(Produto *lista) {
     }
 
     cout << "Informe o codigo do produto que deseja realizar a venda: ";
-    cin >> codigo;
+    do {
+        cin >> codigo;
+    } while (codigo <= 0);
     while (p != NULL and p->codigo != codigo) {
         p = p->proximo;
     }
     if (p != NULL) // encontrou elemento
     {
         if ((p->q_estoque - p->q_vendida) == 0) {
-            cout << "produto fora de estoque!" << endl;
+            cout << "Produto fora de estoque!" << endl;
             return;
         }
         do {
@@ -442,14 +450,14 @@ void vendas(Produto *lista) {
             cin >> qtde;
         } while (qtde < 1);
         if (qtde > (p->q_estoque - p->q_vendida)) {
-            cout << "quantidade de produtos insuficiente." << endl;
-            cout << "quantidade de produtos no estoque: " << p->q_estoque - p->q_vendida << endl;
+            cout << "Quantidade de produtos insuficiente." << endl;
+            cout << "Quantidade de produtos no estoque: " << p->q_estoque - p->q_vendida << endl;
             qtde_venda = (p->q_estoque - p->q_vendida);
         } else
             qtde_venda = qtde;
-        cout << "quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
-        cout << "preco de venda unitario do produto: R$ " << p->preco << endl;
-        cout << "preco total da venda: R$ " << p->preco * qtde_venda << endl;
+        cout << "Quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
+        cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
+        cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
 
         do {
             cout << "Confirmar venda: S(sim) / N(nao)?" << endl; // botar pra maiusculo
@@ -460,9 +468,9 @@ void vendas(Produto *lista) {
         } while (opcao2 != 's' and opcao2 != 'n');
         if (opcao2 == 's') {
             p->q_vendida += qtde_venda;
-            cout << "venda realizada!" << endl;
+            cout << "Venda realizada!" << endl;
         } else {
-            cout << "venda nao realizada" << endl;
+            cout << "Venda nao realizada!" << endl;
             return;
         }
         return;
