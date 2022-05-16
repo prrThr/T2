@@ -97,7 +97,7 @@ void mostrarInfos(Produto *p, char &opcao2, Produto **lista) {
 void continuar() {
     char continuar;
     do {
-        cout << "Pressione ENTER para continuar: ";
+        cout << "\nPressione ENTER para continuar: ";
         continuar = cin.get();
     } while (continuar != '\n');
 }
@@ -232,7 +232,7 @@ void consulta(Produto *lista) {
         cout << "Nome: " << p->nome << endl;
         cout << "Codigo: " << p->codigo << endl;
         cout << "Preco: " << p->preco << endl;
-        cout << "Quantidade no estoque: " << p->q_estoque << endl;
+        cout << "Quantidade no estoque: " << p->q_estoque << " unid." << endl;
         cout << "Quantidade vendida:" << p->q_vendida << endl;
         cout << "----------------------" << endl;
         return;
@@ -359,7 +359,7 @@ void relatorio_estoque(Produto *lista) {
             cout << "Nome: " << p->nome << endl;
             cout << "Codigo: " << p->codigo << endl;
             cout << "Preco: R$" << p->preco << endl;
-            cout << "Quantidade no estoque: " << p->q_estoque << endl;
+            cout << "Quantidade no estoque: " << p->q_estoque << " unid." << endl;
             p = p->proximo;
         }
     }
@@ -398,42 +398,41 @@ void vendas(Produto *lista) {
     do {
         cin >> codigo;
     } while (codigo <= 0);
+
     while (p != NULL and p->codigo != codigo) {
         p = p->proximo;
     }
-    if (p != NULL) // encontrou elemento
-    {
+    if (p != NULL) { // encontrou elemento
         if ((p->q_estoque - p->q_vendida) == 0) {
             cout << "Produto fora de estoque!" << endl;
             return;
         }
         do {
-            cout << "Informe a quantidade de produtos vendidos: " << endl;
+            cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): " << endl;
             cin >> qtde;
         } while (qtde < 1);
         if (qtde > (p->q_estoque - p->q_vendida)) {
             cout << "Quantidade de produtos insuficiente." << endl;
             cout << "Quantidade de produtos no estoque: " << p->q_estoque - p->q_vendida << endl;
             qtde_venda = (p->q_estoque - p->q_vendida);
-        } else
-            qtde_venda = qtde;
-        cout << "Quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
-        cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
-        cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
-
-        do {
-            cout << "Confirmar venda: S(sim) / N(nao)?" << endl; // botar pra maiusculo
-            cin.ignore();
-            cin.get(opcao2);
-            if (opcao2 != 's' and opcao2 != 'n')
-                cout << "opcao invalida!" << endl;
-        } while (opcao2 != 's' and opcao2 != 'n');
-        if (opcao2 == 's') {
-            p->q_vendida += qtde_venda;
-            cout << "Venda realizada!" << endl;
         } else {
-            cout << "Venda nao realizada!" << endl;
-            return;
+            qtde_venda = qtde;
+            cout << "Quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
+            cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
+            cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
+
+            do {
+                cout << "Confirmar venda?: S(sim) / N(nao)" << endl; // botar pra maiusculo
+                cin.ignore();
+                cin.get(opcao2);
+                if (opcao2 != 's' and opcao2 != 'n')
+                    cout << "opcao invalida!" << endl;
+            } while (opcao2 != 's' and opcao2 != 'n');
+            if (opcao2 == 's') {
+                p->q_vendida += qtde_venda;
+                cout << "Venda realizada!" << endl;
+            } else
+                cout << "Venda nao realizada!" << endl;
         }
         return;
     }
