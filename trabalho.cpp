@@ -180,10 +180,8 @@ void inclusao(Produto **lista) {
 // ---------- Ordenar  ---------- //
 /* void ordenar(string nome, Produto **lista) { //! ARRUMAR
     Produto *p, *paux, *aux;
-
     if (lista == NULL)
         return;
-
     while (p != NULL and nome[0] < p->nome[0]) {
         p = p->proximo;
     }
@@ -352,8 +350,7 @@ void relatorio_estoque(Produto *lista) {
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else // se a lista nao esta vazia
-    {
+    else { // se a lista nao esta vazia
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Nome: " << p->nome << endl;
@@ -371,8 +368,7 @@ void relatorio_vendas(Produto *lista) {
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else // se a lista nao esta vazia
-    {
+    else { // se a lista nao esta vazia
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Codigo: " << p->codigo << endl;
@@ -408,7 +404,7 @@ void vendas(Produto *lista) {
             return;
         }
         do {
-            cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): " << endl;
+            cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): ";
             cin >> qtde;
         } while (qtde < 1);
         if (qtde > (p->q_estoque - p->q_vendida)) {
@@ -417,23 +413,23 @@ void vendas(Produto *lista) {
             qtde_venda = (p->q_estoque - p->q_vendida);
         } else {
             qtde_venda = qtde;
-            cout << "Quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
+            cout << "Quantidade de produtos " << p->nome << " que irao ser vendidos: " << qtde_venda << endl;
             cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
             cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
-
-            do {
-                cout << "Confirmar venda?: S(sim) / N(nao)" << endl; // botar pra maiusculo
-                cin.ignore();
-                cin.get(opcao2);
-                if (opcao2 != 's' and opcao2 != 'n')
-                    cout << "opcao invalida!" << endl;
-            } while (opcao2 != 's' and opcao2 != 'n');
-            if (opcao2 == 's') {
-                p->q_vendida += qtde_venda;
-                cout << "Venda realizada!" << endl;
-            } else
-                cout << "Venda nao realizada!" << endl;
         }
+        do {
+            cout << "Confirmar venda?: S(sim) / N(nao)"; // botar pra maiusculo
+            cin.ignore();
+            cin.get(opcao2);
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
+            p->q_vendida += qtde_venda;
+            cout << "Venda realizada!" << endl;
+        } else
+            cout << "Venda nao realizada!" << endl;
+
         return;
     }
     cout << "Produto inexistente" << endl;
