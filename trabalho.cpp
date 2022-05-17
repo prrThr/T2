@@ -17,7 +17,7 @@ int funcao_opcao();
 void mostrarInfos(Produto, char &, Produto **);
 void continuar();
 void inclusao(Produto **);
-// void ordenar(string, Produto **); //! ARRUMAR
+void ordenar(string, Produto **); //! ARRUMAR
 void consulta(Produto *);
 void destroilista(Produto **);
 void exclusao(Produto **);
@@ -119,15 +119,20 @@ int funcao_opcao() {
     return escolha;
 }
 
-// ---------- Incluir ---------- //
+// --------------- Incluir --------------- //
 void inclusao(Produto **lista) {
-    Produto *p, *p_aux, *procurar;
+    Produto *p, *p_aux, *procurar, *pant;
     string addProduto;
+    bool ultimo = true;
     p = new Produto; // Aloca memoria para novo nodo
+
+    p_aux = *lista;
+    pant = *lista;
 
     if (p == NULL) {
         cout << "Sem memoria";
         cin.get();
+        // destroilista(&lista);
         exit(1);
     }
 
@@ -139,13 +144,55 @@ void inclusao(Produto **lista) {
     while (procurar != NULL) {
         if (procurar->nome == addProduto) {
             cout << "Produto ja existente! " << endl;
+            delete p;
             return;
         }
         procurar = procurar->proximo;
     }
+
     p->nome = addProduto;
 
-    // ordenar(addProduto, lista);
+    // --------------- ORDENAR --------------- //
+    if (*lista == NULL) { // Se nada tiver sido includo
+        cout << "chegou aqui #1" << endl;
+        p->proximo = NULL;
+        *lista = p;
+
+    } else if (p->nome < p_aux->nome) { // Se já tem algo incluido mas addProduto é o primeiro na ordem alfabetica
+        cout << "chegou aqui #2" << endl;
+        p->proximo = p_aux;
+        *lista = p;
+
+    } else { // Se já tem algo incluido e o AddProduto deve ficar no meio ou final da lista
+
+        while (p_aux != NULL) { // Procurando até chegar aonde o 'nome' é menor que 'p_aux->nome'
+            if (p->nome < p_aux->nome) {
+                while (pant->proximo != p_aux)
+                    pant = pant->proximo;
+                pant->proximo = p;
+                p->proximo = p_aux;
+                ultimo = false;
+                cout << "chegou aqui #3" << endl;
+                break;
+            }
+
+            cout << "p->nome = " << p->nome << " / p_aux->nome = " << p_aux->nome << endl;
+            p_aux = p_aux->proximo;
+            cout << "chegou aqui #4" << endl;
+        }
+        p_aux = *lista;
+        cout << "chegou aqui #5" << endl;
+        if (ultimo == true) {
+            while (p_aux->proximo != NULL) // Fazendo o 'pant' virar o antes de 'p'
+                p_aux = p_aux->proximo;
+            p_aux->proximo = p;
+            p->proximo = NULL;
+            cout << "chegou aqui #6" << endl;
+        }
+
+        // pant = NULL
+    }
+    // --------------- FIM ORDENAR  ---------------  //
 
     srand(time(NULL));
     p->codigo = rand() % 100 + 1;
@@ -161,56 +208,11 @@ void inclusao(Produto **lista) {
         cin >> p->preco;
     } while (p->preco <= 0);
 
-    p->proximo = NULL;
-    if (*lista == NULL) { // incluir o primeiro
 
-        *lista = p; // Conecta o novo nodo ao inicio da lista
-        cout << "Inclusao confirmada!" << endl;
-        return;
-    }
-
-    p_aux = *lista; // a partir do primeiro
-    while (p_aux->proximo != NULL) {
-        p_aux = p_aux->proximo;
-    }
-    p_aux->proximo = p; // inclui novo nodo, sem necessidade alterar a lista
     cout << "Inclusao confirmada!" << endl;
 }
 
-// ---------- Ordenar  ---------- //
-/* void ordenar(string nome, Produto **lista) { //! ARRUMAR
-    Produto *p, *paux, *aux;
-
-    if (lista == NULL)
-        return;
-
-    while (p != NULL and nome[0] < p->nome[0]) {
-        p = p->proximo;
-    }
-    if (p != NULL) // encontrou elemento
-    {
-        if (p->nome[0] == nome[0]) {
-            for (int i = 1; i < nome.size(); i++)
-                if (nome[i] > p->nome[i]) {
-                    //*faz a alteração
-                    paux->nome = nome;
-                    aux = p;
-                    p = paux;
-                    paux = aux;
-                    break;
-                }
-        }
-        //*faz a alteração
-        paux->nome = nome;
-        aux = p;
-        p = paux;
-        paux = aux;
-    }
-    return;
-}
- */
-
-// ---------- Consulta ---------- //
+// --------------- Consulta --------------- //
 void consulta(Produto *lista) {
     int codigo;
     Produto *p = lista;
@@ -241,7 +243,7 @@ void consulta(Produto *lista) {
     cout << "Produto inexistente" << endl;
 }
 
-//---------- Liberar memória ---------- //
+//--------------- Liberar memória --------------- //
 void destroilista(Produto **lista) {
     Produto *p;
     while (*lista != NULL) {
@@ -251,7 +253,7 @@ void destroilista(Produto **lista) {
     }
 }
 
-//---------- Excluir ---------- //
+//---------------      Excluir --------------- //
 void exclusao(Produto **lista) {
     Produto *p;
     p = *lista;
@@ -346,14 +348,13 @@ void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
     exclusao_aux2(p, lista, opcao2, pant);
 }
 
-// ---------- Relatorio Estoque ---------- //
+// --------------- Relatorio Estoque --------------- //
 void relatorio_estoque(Produto *lista) {
     Produto *p = lista;
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else // se a lista nao esta vazia
-    {
+    else { // se a lista nao esta vazia
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Nome: " << p->nome << endl;
@@ -365,14 +366,13 @@ void relatorio_estoque(Produto *lista) {
     }
 }
 
-// ---------- Relatorio Vendas ---------- //
+// --------------- Relatorio Vendas --------------- //
 void relatorio_vendas(Produto *lista) {
     Produto *p = lista;
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else // se a lista nao esta vazia
-    {
+    else { // se a lista nao esta vazia
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Codigo: " << p->codigo << endl;
@@ -383,7 +383,7 @@ void relatorio_vendas(Produto *lista) {
     }
 }
 
-// ---------- Vendas ---------- //
+// ------------------   Vendas  ------------------ //
 void vendas(Produto *lista) {
     int qtde, qtde_venda = 0, codigo;
     Produto *p = lista;
@@ -408,7 +408,7 @@ void vendas(Produto *lista) {
             return;
         }
         do {
-            cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): " << endl;
+            cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): ";
             cin >> qtde;
         } while (qtde < 1);
         if (qtde > (p->q_estoque - p->q_vendida)) {
@@ -417,23 +417,23 @@ void vendas(Produto *lista) {
             qtde_venda = (p->q_estoque - p->q_vendida);
         } else {
             qtde_venda = qtde;
-            cout << "Quantidade de produtos " << p->nome << " vendidos: " << qtde_venda << endl;
+            cout << "Quantidade de produtos " << p->nome << " que irao ser vendidos: " << qtde_venda << endl;
             cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
             cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
-
-            do {
-                cout << "Confirmar venda?: S(sim) / N(nao)" << endl; // botar pra maiusculo
-                cin.ignore();
-                cin.get(opcao2);
-                if (opcao2 != 's' and opcao2 != 'n')
-                    cout << "opcao invalida!" << endl;
-            } while (opcao2 != 's' and opcao2 != 'n');
-            if (opcao2 == 's') {
-                p->q_vendida += qtde_venda;
-                cout << "Venda realizada!" << endl;
-            } else
-                cout << "Venda nao realizada!" << endl;
         }
+        do {
+            cout << "Confirmar venda?: S(sim) / N(nao)"; // botar pra maiusculo
+            cin.ignore();
+            cin.get(opcao2);
+            if (opcao2 != 's' and opcao2 != 'n')
+                cout << "opcao invalida!" << endl;
+        } while (opcao2 != 's' and opcao2 != 'n');
+        if (opcao2 == 's') {
+            p->q_vendida += qtde_venda;
+            cout << "Venda realizada!" << endl;
+        } else
+            cout << "Venda nao realizada!" << endl;
+
         return;
     }
     cout << "Produto inexistente" << endl;
