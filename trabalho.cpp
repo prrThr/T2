@@ -1,9 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-// Adicionar os system("cls"), cin.ignore() e os "enters"
-// Fazer os teste dos while's
-// Tazer a subrotina de ordenação
+
 using namespace std;
 
 typedef struct Nodo {
@@ -14,10 +12,10 @@ typedef struct Nodo {
 } Produto;
 
 int funcao_opcao();
-void mostrarInfos(Produto, char &, Produto **);
+void mostrarInfos(Produto, char &);
 void continuar();
 void inclusao(Produto **);
-void ordenar(string, Produto **); //! ARRUMAR
+void ordenar(string, Produto **);
 void consulta(Produto *);
 void destroilista(Produto **);
 void exclusao(Produto **);
@@ -78,7 +76,8 @@ int main() {
 }
 
 // ---------- Mostrar Infos ----------//
-void mostrarInfos(Produto *p, char &opcao2, Produto **lista) {
+void mostrarInfos(Produto *p, char &opcao2, bool &mostrar) {
+    mostrar = false;
     cout << "Elemento encontrado!" << endl;
     cout << "Nome: " << p->nome << endl;
     cout << "Codigo: " << p->codigo << endl;
@@ -86,11 +85,11 @@ void mostrarInfos(Produto *p, char &opcao2, Produto **lista) {
     cout << "Quantidade no estoque: " << p->q_estoque << endl;
     cout << "Quantidade vendida:" << p->q_vendida << endl;
     do {
-        cout << "Confirma exclusao: S(sim) / N(nao)?" << endl; // botar pra maiusculo
-        cin >> opcao2;
-        if (opcao2 != 's' and opcao2 != 'n')
+        cout << "Confirmar exclusao: S(sim) / N(nao)?" << endl;
+        opcao2 = toupper(cin.get());
+        if (opcao2 != 'S' and opcao2 != 'N')
             cout << "opcao invalida!" << endl;
-    } while (opcao2 != 's' and opcao2 != 'n');
+    } while (opcao2 != 'S' and opcao2 != 'N');
 }
 
 // ---------- Continuar ----- //
@@ -132,7 +131,7 @@ void inclusao(Produto **lista) {
     if (p == NULL) {
         cout << "Sem memoria";
         cin.get();
-        // destroilista(&lista);
+        destroilista(lista);
         exit(1);
     }
 
@@ -143,7 +142,7 @@ void inclusao(Produto **lista) {
     procurar = *lista;
     while (procurar != NULL) {
         if (procurar->nome == addProduto) {
-            cout << "Produto ja existente! " << endl;
+            cout << "Produto ja existente! " << endl; //! TESTAR AQUI DENOVO
             delete p;
             return;
         }
@@ -153,49 +152,41 @@ void inclusao(Produto **lista) {
     p->nome = addProduto;
 
     // --------------- ORDENAR --------------- //
-    if (*lista == NULL) { // Se nada tiver sido includo
-        cout << "chegou aqui #1" << endl;
+    if (*lista == NULL) {
         p->proximo = NULL;
         *lista = p;
 
-    } else if (p->nome < p_aux->nome) { // Se já tem algo incluido mas addProduto é o primeiro na ordem alfabetica
-        cout << "chegou aqui #2" << endl;
+    } else if (p->nome < p_aux->nome) {
         p->proximo = p_aux;
         *lista = p;
 
-    } else { // Se já tem algo incluido e o AddProduto deve ficar no meio ou final da lista
+    } else {
 
-        while (p_aux != NULL) { // Procurando até chegar aonde o 'nome' é menor que 'p_aux->nome'
+        while (p_aux != NULL) {
             if (p->nome < p_aux->nome) {
                 while (pant->proximo != p_aux)
                     pant = pant->proximo;
                 pant->proximo = p;
                 p->proximo = p_aux;
                 ultimo = false;
-                cout << "chegou aqui #3" << endl;
                 break;
             }
-
-            cout << "p->nome = " << p->nome << " / p_aux->nome = " << p_aux->nome << endl;
             p_aux = p_aux->proximo;
-            cout << "chegou aqui #4" << endl;
         }
+
         p_aux = *lista;
-        cout << "chegou aqui #5" << endl;
+
         if (ultimo == true) {
             while (p_aux->proximo != NULL) // Fazendo o 'pant' virar o antes de 'p'
                 p_aux = p_aux->proximo;
             p_aux->proximo = p;
             p->proximo = NULL;
-            cout << "chegou aqui #6" << endl;
         }
-
-        // pant = NULL
     }
     // --------------- FIM ORDENAR  ---------------  //
 
     srand(time(NULL));
-    p->codigo = rand() % 100 + 1;
+    p->codigo = rand() % 500 + 1;
     cout << "Codigo do produto: " << p->codigo << endl;
 
     do {
@@ -207,7 +198,6 @@ void inclusao(Produto **lista) {
         cout << "Preco de venda: ";
         cin >> p->preco;
     } while (p->preco <= 0);
-
 
     cout << "Inclusao confirmada!" << endl;
 }
@@ -225,7 +215,7 @@ void consulta(Produto *lista) {
     cout << "Informe o codigo do produto que deseja consultar: ";
     do {
         cin >> codigo;
-    } while (codigo <= 0);
+    } while (codigo <= 0 or codigo > 500);
     while (p != NULL and p->codigo != codigo)
         p = p->proximo;
 
@@ -262,7 +252,7 @@ void exclusao(Produto **lista) {
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else { // Se a lista não esta vazia
+    else {
         do {
             cout << "Deseja procurar pelo codigo ou nome do produto?" << endl;
             cout << "1. Codigo" << endl;
@@ -274,12 +264,12 @@ void exclusao(Produto **lista) {
             cout << "informe o codigo do produto que deseja excluir: ";
             do {
                 cin >> codigo;
-            } while (codigo <= 0);
+            } while (codigo <= 0 or codigo > 500);
             exclusao_codigo(p, codigo, lista);
         }
 
         else {
-            cout << "informe o nome do produto que deseja excluir: ";
+            cout << "Informe o nome do produto que deseja excluir: ";
             cin.ignore();
             getline(cin, produto);
             exclusao_nome(p, produto, lista);
@@ -287,65 +277,71 @@ void exclusao(Produto **lista) {
     }
 }
 
-void exclusao_aux1(Produto *p, Produto **lista, char opcao2) {
-    mostrarInfos(p, opcao2, lista);
-    if (opcao2 == 's') {
-        *lista = p->proximo; // exclusao do 1o nodo
-        delete p;            // libera memória do nodo excluido
-        cout << "exclusao confirmada!" << endl;
+void exclusao_aux1(Produto *p, Produto **lista, char opcao2, bool &mostrar) {
+    mostrarInfos(p, opcao2, mostrar);
+    if (opcao2 == 'S') {
+        *lista = p->proximo;
+        delete p;
+        cout << "Exclusao confirmada!" << endl;
         return;
     } else
-        cout << "Exclusao nao realizada" << endl;
+        cout << "Exclusao nao realizada!" << endl;
     return;
 }
-void exclusao_aux2(Produto *p, Produto **lista, char opcao2, Produto *pant) {
-    if (p != NULL) { // achou elemento pra excluir
-        mostrarInfos(p, opcao2, lista);
+void exclusao_aux2(Produto *p, Produto **lista, char opcao2, Produto *pant, bool &mostrar) {
+    if (p != NULL) {
+        mostrarInfos(p, opcao2, mostrar);
 
-        if (opcao2 == 's') {
-            pant->proximo = p->proximo; // conecta nodos ant e post
-            delete p;                   // libera memória do nodo excluido
-            cout << "exclusao confirmada!" << endl;
+        if (opcao2 == 'S') {
+            pant->proximo = p->proximo;
+            delete p;
+            cout << "Exclusao confirmada!" << endl;
         } else {
             cout << "Exclusao nao realizada" << endl;
             return;
         }
-    } else
-        cout << "Produto nao encontrado" << endl;
+    } else {
+        if (mostrar == true)
+            cout << "Produto nao encontrado" << endl;
+    }
 }
 
 void exclusao_nome(Produto *p, string produto, Produto **lista) {
+    bool mostrar = true;
     Produto *pant = NULL;
     char opcao2;
 
     if (p->nome == produto)
-        exclusao_aux1(p, lista, opcao2);
+        exclusao_aux1(p, lista, opcao2, mostrar);
 
     pant = *lista;
-    p = p->proximo; // tipo um i++
+    p = p->proximo;
     while (p != NULL and p->nome != produto) {
         pant = p;
         p = p->proximo;
     }
 
-    exclusao_aux2(p, lista, opcao2, pant);
+    exclusao_aux2(p, lista, opcao2, pant, mostrar);
 }
 
 void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
+    bool mostrar = true;
     Produto *pant = NULL;
     char opcao2;
 
-    if (p->codigo == codigo)
-        exclusao_aux1(p, lista, opcao2);
+    if (p->codigo == codigo) {
+        cin.ignore();
+        exclusao_aux1(p, lista, opcao2, mostrar);
+    }
 
     pant = *lista;
-    p = p->proximo; // tipo um i++
+    p = p->proximo;
     while (p != NULL and p->codigo != codigo) {
         pant = p;
         p = p->proximo;
     }
 
-    exclusao_aux2(p, lista, opcao2, pant);
+    exclusao_aux2(p, lista, opcao2, pant, mostrar);
 }
 
 // --------------- Relatorio Estoque --------------- //
@@ -354,7 +350,7 @@ void relatorio_estoque(Produto *lista) {
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else { // se a lista nao esta vazia
+    else {
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Nome: " << p->nome << endl;
@@ -372,7 +368,7 @@ void relatorio_vendas(Produto *lista) {
 
     if (p == NULL)
         cout << "Nenhum produto cadastrado. Voltando ao menu..." << endl;
-    else { // se a lista nao esta vazia
+    else {
         while (p != NULL) {
             cout << "-------------------------" << endl;
             cout << "Codigo: " << p->codigo << endl;
@@ -407,10 +403,12 @@ void vendas(Produto *lista) {
             cout << "Produto fora de estoque!" << endl;
             return;
         }
+
         do {
             cout << "Informe a quantidade do produto '" << p->nome << "' vendidos(as): ";
             cin >> qtde;
         } while (qtde < 1);
+
         if (qtde > (p->q_estoque - p->q_vendida)) {
             cout << "Quantidade de produtos insuficiente." << endl;
             cout << "Quantidade de produtos no estoque: " << p->q_estoque - p->q_vendida << endl;
@@ -421,14 +419,16 @@ void vendas(Produto *lista) {
             cout << "Preco de venda unitario do produto: R$ " << p->preco << endl;
             cout << "Preco total da venda: R$ " << p->preco * qtde_venda << endl;
         }
+
         do {
-            cout << "Confirmar venda?: S(sim) / N(nao)"; // botar pra maiusculo
+            cout << "Confirmar venda?: S(sim) / N(nao)";
             cin.ignore();
-            cin.get(opcao2);
-            if (opcao2 != 's' and opcao2 != 'n')
+            opcao2 = toupper(cin.get());
+            if (opcao2 != 'S' and opcao2 != 'N')
                 cout << "opcao invalida!" << endl;
-        } while (opcao2 != 's' and opcao2 != 'n');
-        if (opcao2 == 's') {
+        } while (opcao2 != 'S' and opcao2 != 'N');
+
+        if (opcao2 == 'S') {
             p->q_vendida += qtde_venda;
             cout << "Venda realizada!" << endl;
         } else
