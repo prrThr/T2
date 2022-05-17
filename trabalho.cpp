@@ -142,7 +142,7 @@ void inclusao(Produto **lista) {
     procurar = *lista;
     while (procurar != NULL) {
         if (procurar->nome == addProduto) {
-            cout << "Produto ja existente! " << endl; //! TESTAR AQUI DENOVO
+            cout << "Produto ja existente! Pressione enter!" << endl; //! PROBLEMA AQUI
             delete p;
             return;
         }
