@@ -17,7 +17,7 @@ int funcao_opcao();
 void mostrarInfos(Produto, char &, Produto **);
 void continuar();
 void inclusao(Produto **);
-// void ordenar(string, Produto **); //! ARRUMAR
+void ordenar(string, Produto **); //! ARRUMAR
 void consulta(Produto *);
 void destroilista(Produto **);
 void exclusao(Produto **);
@@ -121,15 +121,19 @@ int funcao_opcao() {
 
 // ---------- Incluir ---------- //
 void inclusao(Produto **lista) {
-    Produto *p, *p_aux, *procurar;
+    Produto *p, *p_aux, *procurar, *aux, *pant = NULL;
     string addProduto;
     p = new Produto; // Aloca memoria para novo nodo
+
+    p_aux = *lista;
 
     if (p == NULL) {
         cout << "Sem memoria";
         cin.get();
+        //destroilista(&lista);
         exit(1);
     }
+
 
     cin.ignore();
     cout << "Insira o nome do produto: ";
@@ -137,15 +141,49 @@ void inclusao(Produto **lista) {
 
     procurar = *lista;
     while (procurar != NULL) {
+        cout << procurar->nome;
         if (procurar->nome == addProduto) {
             cout << "Produto ja existente! " << endl;
+            delete p;
             return;
         }
         procurar = procurar->proximo;
     }
     p->nome = addProduto;
 
-    // ordenar(addProduto, lista);
+    // -- ORDENAR -- //
+    // ARRUMAR A BAIXO
+    if (*lista == NULL) {
+        cout << "chegou aqui #1";
+        *lista = p;
+        p->proximo = NULL;
+    } else if (p_aux->nome > p->nome) {
+        cout << "chegou aqui #2";
+        *lista = p;
+        p->proximo = p_aux;
+    } else {
+        // paux -> prox
+        // pant = NULL
+        cout << "chegou aqui #3";
+        p_aux = *lista;
+        p_aux = p_aux->proximo;
+        pant = *lista;
+        cout << "chegou aqui#3";
+
+        ///         1(pant)   *(p)   2(aux)       ///
+
+        while(p->proximo != NULL) {
+            if (p->nome < pant->nome) {
+                pant->proximo = p;
+                p->proximo = aux;
+
+            }
+            aux = aux->proximo;
+            pant = pant->proximo;
+        }
+
+    }
+    // --  -------  //
 
     srand(time(NULL));
     p->codigo = rand() % 100 + 1;
@@ -162,12 +200,6 @@ void inclusao(Produto **lista) {
     } while (p->preco <= 0);
 
     p->proximo = NULL;
-    if (*lista == NULL) { // incluir o primeiro
-
-        *lista = p; // Conecta o novo nodo ao inicio da lista
-        cout << "Inclusao confirmada!" << endl;
-        return;
-    }
 
     p_aux = *lista; // a partir do primeiro
     while (p_aux->proximo != NULL) {
@@ -178,35 +210,8 @@ void inclusao(Produto **lista) {
 }
 
 // ---------- Ordenar  ---------- //
-/* void ordenar(string nome, Produto **lista) { //! ARRUMAR
-    Produto *p, *paux, *aux;
-    if (lista == NULL)
-        return;
-    while (p != NULL and nome[0] < p->nome[0]) {
-        p = p->proximo;
-    }
-    if (p != NULL) // encontrou elemento
-    {
-        if (p->nome[0] == nome[0]) {
-            for (int i = 1; i < nome.size(); i++)
-                if (nome[i] > p->nome[i]) {
-                    //*faz a alteração
-                    paux->nome = nome;
-                    aux = p;
-                    p = paux;
-                    paux = aux;
-                    break;
-                }
-        }
-        //*faz a alteração
-        paux->nome = nome;
-        aux = p;
-        p = paux;
-        paux = aux;
-    }
-    return;
-}
- */
+
+
 
 // ---------- Consulta ---------- //
 void consulta(Produto *lista) {
