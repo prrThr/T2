@@ -142,7 +142,7 @@ void inclusao(Produto **lista) {
     procurar = *lista;
     while (procurar != NULL) {
         if (procurar->nome == addProduto) {
-            cout << "Produto ja existente! Pressione enter!" << endl; //! PROBLEMA AQUI
+            cout << "Produto ja existente! Pressione enter!" << endl;
             delete p;
             return;
         }
@@ -219,7 +219,8 @@ void consulta(Produto *lista) {
     while (p != NULL and p->codigo != codigo)
         p = p->proximo;
 
-    if (p != NULL) { // encontrou elemento
+    if (p != NULL) // encontrou elemento
+    {
         cout << "----------------------" << endl;
         cout << "Nome: " << p->nome << endl;
         cout << "Codigo: " << p->codigo << endl;
@@ -309,7 +310,7 @@ void exclusao_aux2(Produto *p, Produto **lista, char opcao2, Produto *pant, bool
 void exclusao_nome(Produto *p, string produto, Produto **lista) {
     bool mostrar = true;
     Produto *pant = NULL;
-    char opcao2;
+    char opcao2 = 0;
 
     if (p->nome == produto)
         exclusao_aux1(p, lista, opcao2, mostrar);
@@ -327,7 +328,7 @@ void exclusao_nome(Produto *p, string produto, Produto **lista) {
 void exclusao_codigo(Produto *p, int codigo, Produto **lista) {
     bool mostrar = true;
     Produto *pant = NULL;
-    char opcao2;
+    char opcao2 = 0;
 
     if (p->codigo == codigo) {
         cin.ignore();
@@ -398,7 +399,8 @@ void vendas(Produto *lista) {
     while (p != NULL and p->codigo != codigo) {
         p = p->proximo;
     }
-    if (p != NULL) { // encontrou elemento
+    if (p != NULL) // encontrou elemento
+    {
         if ((p->q_estoque - p->q_vendida) == 0) {
             cout << "Produto fora de estoque!" << endl;
             return;
